@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shashwat Aryal | Cloud &amp; DevOps student in Kathmandu</title>
+<meta name="description" content="Portfolio of Shashwat Aryal, a BSc CSIT student in Kathmandu building practical Cloud and DevOps skills with AWS, Docker, Terraform and CI/CD.">
+<meta name="theme-color" content="#0e1014">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shashwat Aryal | Cloud &amp; DevOps">
+<meta property="og:description" content="Hands-on Cloud and DevOps projects, documented honestly.">
+<meta property="og:image" content="/assets/og-image.png">
+<meta name="twitter:image" content="/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="/js/theme-init.js"></script>
+<link rel="stylesheet" href="/css/styles.css">
+<script type="module" src="/js/main.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="#home" aria-label="Shashwat Aryal, home"><svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 22h22M18 22v10h20v10H18" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shashwat Aryal</span></a>
+    <button class="icon-btn nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">Menu</button>
+    <ul id="nav-menu" class="nav-menu">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#journey">Journey</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="icon-btn theme-toggle" type="button" aria-pressed="false">Light theme</button>
+  </nav>
+</header>
+
+<main id="main">
+<section id="home" class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <p class="kicker">Shashwat Aryal · Kathmandu, Nepal</p>
+    <h1 id="hero-title">Building reliable cloud infrastructure and automated delivery workflows.</h1>
+    <p class="lede">I'm a BSc CSIT student building practical Cloud and DevOps skills through real projects, and writing down what works, what broke and what I changed.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="#projects">View projects</a>
+      <a class="btn" href="https://github.com/sassy-on-cloud">GitHub profile</a>
+      <a class="btn" href="https://www.linkedin.com/in/shashwataryal/">LinkedIn</a>
+      <a class="btn" href="#contact">Contact me</a>
+    </div>
+  </div>
+  <figure class="pipeline-wrap">
+    <ol class="pipeline" aria-label="Verified delivery path for the Cloud-Native DevOps Platform project">
+      <li><b>Commit</b><span>GitHub Actions</span><i class="chip done">implemented</i></li>
+      <li><b>Authenticate</b><span>GitHub OIDC and IAM</span><i class="chip done">implemented</i></li>
+      <li><b>Publish</b><span>Docker image to ECR</span><i class="chip done">implemented</i></li>
+      <li><b>Deploy</b><span>ECS Fargate</span><i class="chip done">verified</i></li>
+      <li><b>Route</b><span>Application Load Balancer</span><i class="chip done">verified</i></li>
+      <li class="planned"><b>Extend</b><span>WAF and observability</span><i class="chip">planned</i></li>
+    </ol>
+    <figcaption>Based on the project README. The platform is in progress; TLS, WAF, Kubernetes, and fuller observability remain planned.</figcaption>
+  </figure>
+</section>
+
+<section id="about" class="section" aria-labelledby="about-title">
+  <h2 id="about-title">About</h2>
+  <div class="prose">
+    <p>I'm in the sixth semester of a BSc CSIT degree in Nepal. Over the past while I've moved from Linux and Git basics to containers, AWS deployment, Terraform and CI/CD, because I like understanding how software actually gets to users and stays up.</p>
+    <p>I learn by building small, complete things and documenting them: the architecture, the choices, and the problems I ran into. I care about reliability, automation and security, and I'm working towards a career as a Cloud and DevOps engineer, with cloud security as a longer-term direction.</p>
+  </div>
+</section>
+
+<section id="skills" class="section" aria-labelledby="skills-title">
+  <h2 id="skills-title">Skills</h2>
+  <p class="note">Grouped by how I've used them. "Used in projects" means it appears in a project below. "Learning" means I'm still building experience. None of this is production-level experience.</p>
+  <div id="skills-root" class="skill-groups">
+    <noscript><div class="skill-group"><h3>Cloud and infrastructure</h3><p>AWS, EC2, ECS Fargate, ECR, VPC, IAM, security groups, Application Load Balancer, and CloudWatch.</p></div>
+    <div class="skill-group"><h3>Systems and containers</h3><p>Linux, Ubuntu, Bash, Docker, and Docker Compose. Nginx is a learning focus.</p></div>
+    <div class="skill-group"><h3>Infrastructure and delivery</h3><p>Terraform, Git, GitHub, GitHub Actions, CI/CD, and GitHub Actions OIDC.</p></div>
+    <div class="skill-group"><h3>Development and testing</h3><p>C#, ASP.NET Core, .NET, SQL Server, and automated testing.</p></div>
+    <div class="skill-group"><h3>Observability and orchestration</h3><p>Kubernetes, Prometheus, and Grafana are current learning areas.</p></div>
+    <div class="skill-group"><h3>Security</h3><p>IAM least privilege, network security, HTTP security headers, input validation, and secure configuration.</p></div></noscript>
+    <p>Project-use and learning labels are available when JavaScript is enabled.</p>
+  </div>
+</section>
+
+<section id="projects" class="section" aria-labelledby="projects-title">
+  <h2 id="projects-title">Projects</h2>
+  <div class="filters" role="group" aria-label="Filter projects by category" id="filters"></div>
+  <p id="filter-status" class="note" role="status" aria-live="polite"></p>
+  <div id="projects-root" class="project-grid"><p>Project cards use JavaScript; direct repository links follow.</p></div>
+  <noscript>
+    <p>JavaScript is disabled, so interactive project cards and filters are unavailable. You can still visit the project repositories directly:</p>
+    <ul>
+      <li><a href="https://github.com/sassy-on-cloud/cloud-native-devops-platform">Cloud-Native DevOps Platform</a></li>
+      <li><a href="https://github.com/sassy-on-cloud/producthub-aws-deployment">ProductHub: Dockerized Web Application</a></li>
+      <li><a href="https://github.com/sassy-on-cloud/terraform-aws-infrastructure">Terraform AWS Infrastructure</a></li>
+      <li><a href="https://github.com/sassy-on-cloud/linux-server-administration">Linux Server Administration</a></li>
+      <li><a href="https://github.com/sassy-on-cloud/aws-cloud-quest-cloud-practitioner">AWS Cloud Quest: Cloud Practitioner</a></li>
+    </ul>
+  </noscript>
+</section>
+
+<section id="terminal" class="section" aria-labelledby="term-title">
+  <details class="term-details">
+    <summary id="term-title">Optional: explore with a terminal</summary>
+    <p class="note">A simulated terminal with a fixed list of commands. It cannot run anything. All of the same information is in the sections above and below.</p>
+    <div class="term">
+      <div id="term-out" class="term-out" role="log" aria-live="polite" aria-label="Terminal output" tabindex="0"></div>
+      <form id="term-form" class="term-form" autocomplete="off">
+        <label for="term-in" class="prompt">visitor@portfolio:~$</label>
+        <input id="term-in" type="text" maxlength="40" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="go">
+        <button class="btn" type="submit">Run</button>
+      </form>
+      <div id="term-quick" class="term-quick" role="group" aria-label="Quick commands"></div>
+    </div>
+  </details>
+</section>
+
+<section id="journey" class="section" aria-labelledby="journey-title">
+  <h2 id="journey-title">Journey</h2>
+  <p class="note">The order I learned things in. I've left out dates I can't back up with repository history.</p>
+  <ol class="timeline" id="timeline"></ol>
+</section>
+
+<section id="contact" class="section" aria-labelledby="contact-title">
+  <h2 id="contact-title">Contact</h2>
+  <p class="lede">I'm looking for internships, junior roles and mentors in Cloud and DevOps. The quickest way to reach me is email.</p>
+  <ul class="contact-list">
+    <li><span>Email</span> <a id="email-link" href="mailto:shashwataryal2026@gmail.com">shashwataryal2026@gmail.com</a>
+      <button id="copy-email" class="btn small" type="button">Copy email</button></li>
+    <li><span>Phone</span> <a href="tel:+9779765340161">+977 9765340161</a></li>
+    <li><span>GitHub</span> <a href="https://github.com/sassy-on-cloud" rel="noopener">github.com/sassy-on-cloud</a></li>
+    <li><span>LinkedIn</span> <a href="https://www.linkedin.com/in/shashwataryal/" rel="noopener">linkedin.com/in/shashwataryal</a></li>
+  </ul>
+  <p id="copy-status" class="note" role="status" aria-live="polite"></p>
+</section>
+</main>
+
+<footer class="site-footer">
+  <p>© <span id="year">2026</span> Shashwat Aryal. Built by hand with HTML, CSS and JavaScript.</p>
+  <p><a href="https://github.com/sassy-on-cloud" rel="noopener">GitHub</a> · <a href="https://www.linkedin.com/in/shashwataryal/" rel="noopener">LinkedIn</a></p>
+</footer>
+</body>
+</html>

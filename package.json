@@ -1,0 +1,21 @@
+{
+  "name": "personal-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static portfolio for Shashwat Aryal",
+  "scripts": {
+    "start": "node scripts/serve-site.mjs",
+    "test": "playwright test",
+    "lighthouse": "node scripts/run-lighthouse.mjs",
+    "set-site-url": "node scripts/set-site-url.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.48.0",
+    "lighthouse": "^13.5.0"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}
