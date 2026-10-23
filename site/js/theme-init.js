@@ -36,7 +36,7 @@
       button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
     });
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', dark ? '#090d12' : '#f2f1ea');
+    if (meta) meta.setAttribute('content', dark ? '#090d12' : '#e9eee7');
   }
   document.addEventListener('DOMContentLoaded', syncThemeControls);
   document.addEventListener('click', function (event) {

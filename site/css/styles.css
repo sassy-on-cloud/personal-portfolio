@@ -224,3 +224,19 @@ body,.site-header,.pipeline-wrap,.pipeline,.pipeline li,.term,.contact-panel{tra
 @media(max-width:560px){.pipeline-footer{align-items:flex-start;flex-direction:column}.flow-replay{min-height:44px}.js .hero-title .hero-word{animation-duration:.62s}.js .pipeline-wrap{animation-duration:.72s}}
 @media(hover:none){.card:hover,.skill-group:hover,.lab-note:hover{transform:none;box-shadow:none}.card .card-links .btn{transform:none}}
 @media(prefers-reduced-motion:reduce){.js .hero-title .hero-word,.js .hero-position,.js .hero .lede,.js .hero-readout,.js .hero .cta-row,.js .pipeline-wrap{animation:none;opacity:1;transform:none;filter:none}.hero-line{overflow:visible}.pipeline li::after{display:none}.flow-replay span{transition:none}.scroll-progress span{transition:none;box-shadow:none}.nav-menu a,.btn,.icon-btn,.card,.skill-group,.lab-note,.timeline li,.project-flow,.card-links .btn{transition:none!important}.js .reveal,.js .skill-group.reveal,.js .lab-note.reveal,.js .timeline li.reveal,.js .card.reveal,.js .section>h2.reveal,.js .section>.section-index.reveal{opacity:1;transform:none;transition:none}.card:hover,.card:focus-within,.skill-group:hover,.skill-group:focus-within,.lab-note:hover,.lab-note:focus-within{transform:none}}
+
+/* A calmer sage canvas keeps light mode comfortable while preserving clear contrast. */
+[data-theme="light"]{--background:#e9eee7;--foreground:#26332e;--surface:#f0f3ed;--surface-elevated:#f5f7f1;--muted-surface:#dfe7df;--muted-foreground:#4c5c53;--border:#c5d0c8;--accent:#2b6652;--accent-foreground:#fff;--primary:#2b6652;--primary-foreground:#fff;--focus-ring:#235943;--success:#356c48;--violet:#60517e;--violet-foreground:#fff;--bg:var(--background);--panel:var(--surface);--line:var(--border);--text:var(--foreground);--muted:var(--muted-foreground);--accent-ink:var(--accent-foreground);--ok:var(--success)}
+[data-theme="light"] body{background-image:linear-gradient(to right,transparent 0,transparent calc(100% - 1px),color-mix(in srgb,var(--line) 18%,transparent) calc(100% - 1px)),radial-gradient(ellipse at 76% 4%,color-mix(in srgb,var(--accent) 4%,transparent),transparent 32rem)}
+
+.toolkit-strip{margin-top:1.35rem;max-width:36rem}
+.toolkit-label{display:block;margin-bottom:.55rem;color:var(--muted);font:600 .68rem/1.4 var(--mono);letter-spacing:.1em}
+.toolkit-items{position:relative;display:flex;flex-wrap:wrap;gap:.55rem;isolation:isolate}
+.toolkit-items::before{content:"";position:absolute;z-index:-1;left:.8rem;right:.8rem;top:50%;height:1px;background:linear-gradient(90deg,transparent,var(--line) 12%,var(--line) 88%,transparent)}
+.toolkit-item{display:inline-flex;align-items:center;gap:.5rem;min-height:2.65rem;padding:.45rem .78rem;border:1px solid var(--line);border-radius:999px;background:var(--surface-elevated);color:var(--text);font:600 .78rem/1 var(--sans);box-shadow:0 2px 8px color-mix(in srgb,var(--foreground) 5%,transparent);animation:toolkit-float 4s ease-in-out infinite}
+.toolkit-item:nth-child(2){animation-delay:-1s}.toolkit-item:nth-child(3){animation-delay:-2s}.toolkit-item:nth-child(4){animation-delay:-3s}
+.toolkit-item svg{width:1.05rem;height:1.05rem;fill:none;stroke:var(--accent);stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+@keyframes toolkit-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+[data-theme="light"] .toolkit-item{box-shadow:0 2px 8px #26332e0b}
+@media(max-width:560px){.toolkit-strip{margin-top:1.1rem}.toolkit-items{gap:.4rem}.toolkit-item{min-height:2.5rem;padding:.4rem .65rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.toolkit-item{animation:none}}
