@@ -10,6 +10,8 @@ The portfolio presents completed work, active learning, and planned project stag
 - Responsive, keyboard-usable navigation and project filters.
 - Project case studies with technologies, architecture, security, evidence, and lessons.
 - Reduced-motion support and visible focus styling.
+- A project workflow panel, portfolio readouts, and a compact learning notebook with learning and planned states kept distinct.
+- Lightweight scroll progress and scroll-triggered reveals, with reduced-motion fallbacks.
 - Optional fixed-command demo terminal; it does not execute shell commands.
 - Email and phone links, with no pretend contact form.
 - Static security headers for Cloudflare Pages, a custom 404 page, and social-preview assets.
@@ -20,7 +22,7 @@ The portfolio presents completed work, active learning, and planned project stag
 site/                 Deployable static site
   assets/             Favicon and social-preview artwork
   css/styles.css      Responsive design and theme styles
-  js/content.js       Project, skill, contact, and journey content
+  js/content.js       Project, skill, contact, journey, and lab-note content
   js/main.js          Navigation, filters, theme, and page behavior
 tests/                Playwright end-to-end and axe accessibility tests
 scripts/              Local server, Lighthouse runner, and domain metadata helper

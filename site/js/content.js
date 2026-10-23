@@ -111,3 +111,10 @@ export const JOURNEY = [
   ['CI/CD, application security and automated testing', 'GitHub Actions, security headers and integration tests.'],
   ['Kubernetes and observability', 'Prometheus, Grafana and Kubernetes.', true],
 ];
+
+// Learning areas and planned project stages, explicitly separated from completed work.
+export const LAB_NOTES = [
+  { label: 'LEARNING FOCUS', title: 'Container orchestration', text: 'Building familiarity with Kubernetes concepts and how they extend container workflows.', status: 'Learning' },
+  { label: 'LEARNING FOCUS', title: 'Metrics & dashboards', text: 'Developing observability foundations with Prometheus and Grafana.', status: 'Learning' },
+  { label: 'NEXT PLATFORM STEP', title: 'Harden the deployment', text: 'TLS, AWS WAF, and fuller observability are planned for the cloud platform; they are not implemented yet.', status: 'Planned' },
+];

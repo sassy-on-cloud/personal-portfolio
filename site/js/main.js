@@ -1,10 +1,11 @@
-import { CONTACT, SKILLS, FILTERS, PROJECTS, JOURNEY } from './content.js';
+import { CONTACT, SKILLS, FILTERS, PROJECTS, JOURNEY, LAB_NOTES } from './content.js';
 import { el } from './dom.js';
 import { initTerminal } from './terminal.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const root = document.documentElement;
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+root.classList.add('js');
 
 function initNav() {
   const toggle = $('.nav-toggle');
@@ -27,23 +28,6 @@ function initNav() {
   }
 }
 
-function initTheme() {
-  const btn = $('.theme-toggle');
-  const sync = () => {
-    const dark = root.getAttribute('data-theme') === 'dark';
-    btn.setAttribute('aria-pressed', String(!dark));
-    btn.textContent = dark ? 'Light theme' : 'Dark theme';
-    $('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0e1014' : '#f6f7f9');
-  };
-  btn.addEventListener('click', () => {
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('theme', next); } catch (e) { /* ignore */ }
-    sync();
-  });
-  sync();
-}
-
 function renderSkills() {
   const mount = $('#skills-root');
   mount.replaceChildren(...SKILLS.map(g => el('div', { class: 'skill-group reveal' }, [
@@ -56,7 +40,7 @@ function renderSkills() {
 function section(title, content) { return content ? [el('h4', { text: title }), content] : []; }
 const list = (items) => items && items.length ? el('ul', {}, items.map(t => el('li', { text: t }))) : null;
 
-function projectCard(p) {
+function projectCard(p, index) {
   const links = el('div', { class: 'card-links' }, [
     p.repo ? el('a', { class: 'btn small', href: p.repo, rel: 'noopener', 'aria-label': `${p.title} repository on GitHub`, text: 'Repository' }) : null,
     p.demo ? el('a', { class: 'btn small', href: p.demo, rel: 'noopener', text: 'Live demo' }) : null,
@@ -65,20 +49,26 @@ function projectCard(p) {
     ? el('ul', { class: 'flow', 'aria-label': 'Architecture flow' }, p.flow.map(([label, planned]) =>
         el('li', { class: planned ? 'planned' : '', text: planned ? `${label} (planned)` : label })))
     : null;
+  const architecture = flow ? el('div', { class: 'project-flow' }, [
+    el('p', { class: 'project-flow-label', text: 'Architecture path' }),
+    flow,
+  ]) : null;
   const detail = el('details', { class: 'case' }, [
     el('summary', { text: 'Case study' }),
     ...section('Problem', el('p', { text: p.problem })),
     ...section('Solution', el('p', { text: p.solution })),
-    ...section('Architecture', flow),
     ...section('Implemented', list(p.implemented)),
     ...section('In progress or planned', list(p.planned)),
     ...section('Security', p.security ? el('p', { text: p.security }) : null),
     ...section('Evidence', el('p', { text: p.evidence })),
     ...section('Lessons', el('p', { text: p.lessons })),
   ]);
-  const card = el('article', { class: 'card reveal', 'data-cats': p.categories.join('|') }, [
+  const featured = p.id === 'cloud-native-devops-platform';
+  const card = el('article', { class: `card case-file reveal${featured ? ' featured' : ''}`, 'data-cats': p.categories.join('|') }, [
+    el('p', { class: 'case-index', text: `CASE FILE / ${String(index + 1).padStart(2, '0')}` }),
     el('header', {}, [el('h3', { text: p.title }), el('span', { class: 'badge', text: p.status })]),
     el('p', { text: p.summary }),
+    architecture,
     el('ul', { class: 'tags', 'aria-label': 'Technology stack' }, p.stack.map(s => el('li', { class: 'tag', text: s }))),
     links, detail,
   ]);
@@ -105,6 +95,15 @@ function initProjects() {
   apply('All');
 }
 
+function renderLabNotes() {
+  $('#lab-root').replaceChildren(...LAB_NOTES.map(item => el('article', { class: 'lab-note reveal' }, [
+    el('p', { class: 'case-index', text: item.label }),
+    el('h3', { text: item.title }),
+    el('p', { class: 'lab-description', text: item.text }),
+    el('span', { class: `lab-status${item.status === 'Planned' ? ' planned' : ''}`, text: item.status }),
+  ])));
+}
+
 function renderJourney() {
   $('#timeline').replaceChildren(...JOURNEY.map(([title, text, ongoing]) =>
     el('li', { class: `reveal${ongoing ? ' ongoing' : ''}` }, [
@@ -129,7 +128,12 @@ function initContact() {
 }
 
 function initReveal() {
+  document.querySelectorAll('.section > .section-index, .section > h2').forEach(item => item.classList.add('reveal'));
   const items = document.querySelectorAll('.reveal');
+  const staggerParents = document.querySelectorAll('.skill-groups, .project-grid, .lab-grid, .timeline');
+  staggerParents.forEach(parent => [...parent.children].filter(child => child.matches('.reveal')).forEach((child, index) => {
+    child.style.setProperty('--reveal-index', Math.min(index, 7));
+  }));
   if (reduceMotion || !('IntersectionObserver' in window)) { items.forEach(i => i.classList.add('in')); return; }
   const io = new IntersectionObserver((entries) => entries.forEach(en => {
     if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
@@ -137,5 +141,62 @@ function initReveal() {
   items.forEach(i => io.observe(i));
 }
 
+function initScrollProgress() {
+  const bar = $('#scroll-progress-bar');
+  let scheduled = false;
+  const update = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? Math.min(1, window.scrollY / max) : 0})`;
+    scheduled = false;
+  };
+  window.addEventListener('scroll', () => {
+    if (!scheduled) { scheduled = true; window.requestAnimationFrame(update); }
+  }, { passive: true });
+  window.addEventListener('resize', () => {
+    if (!scheduled) { scheduled = true; window.requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
+}
+
+function initPipelineInteractions() {
+  const figure = $('.pipeline-wrap');
+  const replay = $('#pipeline-replay');
+  const feedback = $('#pipeline-feedback');
+  let replayTimer;
+  const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  motionPreference.addEventListener('change', event => {
+    reduceMotion = event.matches;
+    if (reduceMotion) {
+      clearTimeout(replayTimer);
+      figure.classList.remove('is-replaying');
+      feedback.textContent = 'Motion is minimized by your device preference. Workflow states are shown as documented in the project README.';
+    }
+  });
+  replay.addEventListener('click', () => {
+    clearTimeout(replayTimer);
+    figure.classList.remove('is-replaying');
+    if (!reduceMotion) {
+      void figure.offsetWidth;
+      figure.classList.add('is-replaying');
+      replayTimer = window.setTimeout(() => figure.classList.remove('is-replaying'), 1900);
+      feedback.textContent = 'Illustrative workflow replay complete. This animation is not connected to live infrastructure.';
+    } else {
+      feedback.textContent = 'Motion is minimized by your device preference. Workflow states are shown as documented in the project README.';
+    }
+  });
+
+  if (!reduceMotion && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    figure.addEventListener('pointermove', event => {
+      const bounds = figure.getBoundingClientRect();
+      figure.style.setProperty('--glow-x', `${Math.round((event.clientX - bounds.left) / bounds.width * 100)}%`);
+      figure.style.setProperty('--glow-y', `${Math.round((event.clientY - bounds.top) / bounds.height * 100)}%`);
+    }, { passive: true });
+    figure.addEventListener('pointerleave', () => {
+      figure.style.removeProperty('--glow-x');
+      figure.style.removeProperty('--glow-y');
+    }, { passive: true });
+  }
+}
+
 $('#year').textContent = String(new Date().getFullYear());
-initNav(); initTheme(); renderSkills(); initProjects(); renderJourney(); initContact(); initTerminal(); initReveal();
+initNav(); renderSkills(); initProjects(); renderJourney(); renderLabNotes(); initContact(); initTerminal(); initReveal(); initScrollProgress(); initPipelineInteractions();

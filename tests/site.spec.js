@@ -10,7 +10,8 @@ test.beforeEach(async ({ page }) => {
 
 test('home loads with headline and no console or asset errors', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('reliable cloud infrastructure');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('Cloud systems, built with care.');
+  await expect(page.getByText('Aspiring Cloud & DevOps Engineer')).toBeVisible();
   await page.waitForLoadState('networkidle');
   expect(page.errors).toEqual([]);
 });
@@ -19,7 +20,7 @@ test('every in-page nav link targets an existing section', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.nav-toggle')).toBeHidden();
   const hrefs = await page.locator('#nav-menu a').evaluateAll(as => as.map(a => a.getAttribute('href')));
-  expect(hrefs).toHaveLength(6);
+  expect(hrefs).toHaveLength(7);
   for (const h of hrefs) await expect(page.locator(h)).toHaveCount(1);
 });
 
@@ -74,6 +75,37 @@ test('theme toggle switches and persists', async ({ page }) => {
   await expect(html).toHaveAttribute('data-theme', after);
 });
 
+test('hero keeps a single accessible heading while the word reveal plays', async ({ page }) => {
+  await page.goto('/');
+  const title = page.getByRole('heading', { level: 1 });
+  await expect(title).toHaveAccessibleName('Cloud systems, built with care.');
+  await expect(title.locator('.hero-word').first()).toHaveCSS('animation-name', 'hero-word-in');
+});
+
+test('workflow replay is explicitly illustrative and responds to reduced motion', async ({ page }) => {
+  await page.goto('/');
+  const diagram = page.locator('.pipeline-wrap');
+  const bounds = await diagram.boundingBox();
+  await page.mouse.move(bounds.x + bounds.width * .35, bounds.y + bounds.height * .4);
+  await expect(diagram).toHaveCSS('--glow-x', '35%');
+  const replay = page.getByRole('button', { name: 'Replay path' });
+  await replay.click();
+  await expect(page.locator('.pipeline-wrap')).toHaveClass(/is-replaying/);
+  await expect(page.locator('#pipeline-feedback')).toContainText('not connected to live infrastructure');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await replay.click();
+  await expect(page.locator('.pipeline-wrap')).not.toHaveClass(/is-replaying/);
+  await expect(page.locator('#pipeline-feedback')).toContainText('Motion is minimized');
+});
+
+test('project section headings reveal as they enter view', async ({ page }) => {
+  await page.goto('/');
+  const heading = page.locator('#projects h2');
+  await expect(heading).not.toHaveClass(/in/);
+  await heading.scrollIntoViewIfNeeded();
+  await expect(heading).toHaveClass(/in/);
+});
+
 test('project filtering updates visible cards and announces count', async ({ page }) => {
   await page.goto('/');
   const cards = page.locator('#projects-root .card:visible');
@@ -84,6 +116,14 @@ test('project filtering updates visible cards and announces count', async ({ pag
   await expect(page.getByRole('button', { name: 'Security' })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'All' }).click();
   await expect(cards).toHaveCount(5);
+});
+
+test('lab notes separate current learning from planned platform work', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#lab-root .lab-note')).toHaveCount(3);
+  await expect(page.locator('#lab-root')).toContainText('Learning');
+  await expect(page.locator('#lab-root')).toContainText('Planned');
+  await expect(page.getByRole('link', { name: 'Start a conversation' })).toHaveAttribute('href', 'mailto:shashwataryal2026@gmail.com');
 });
 
 test('every project repo link points at the sassy-on-cloud GitHub account', async ({ page }) => {
@@ -111,7 +151,7 @@ test('terminal runs known commands and rejects unknown ones as plain text', asyn
 test('contact links are correct and copy gives feedback', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.goto('/');
-  await expect(page.locator('a[href^="mailto:"]')).toHaveAttribute('href', 'mailto:shashwataryal2026@gmail.com');
+  await expect(page.locator('#email-link')).toHaveAttribute('href', 'mailto:shashwataryal2026@gmail.com');
   await expect(page.locator('a[href^="tel:"]')).toHaveAttribute('href', 'tel:+9779765340161');
   await page.locator('#copy-email').click();
   await expect(page.locator('#copy-status')).toContainText(/copied|address is/i);
@@ -131,6 +171,19 @@ test('custom 404 page exists', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toContainText("doesn't exist");
 });
 
+test('404 page theme control follows the saved preference across routes', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('theme', 'dark'));
+  await page.goto('/404.html');
+  const toggle = page.locator('.theme-toggle');
+  await expect(toggle).toHaveAccessibleName('Switch to light mode');
+  await toggle.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(toggle).toHaveAccessibleName('Switch to dark mode');
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+});
+
 for (const theme of ['dark', 'light']) {
   test(`axe finds no WCAG A/AA violations in ${theme} theme`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -148,4 +201,6 @@ test('reduced-motion preference disables the pipeline animation', async ({ page 
   await page.goto('/');
   const animationName = await page.locator('.pipeline li').first().evaluate(el => getComputedStyle(el).animationName);
   expect(animationName).toBe('none');
+  await expect(page.locator('.hero-word').first()).toHaveCSS('animation-name', 'none');
+  await expect(page.locator('.project-grid .card').first()).toHaveCSS('opacity', '1');
 });

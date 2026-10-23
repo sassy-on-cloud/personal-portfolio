@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shashwat Aryal | Cloud &amp; DevOps student in Kathmandu</title>
 <meta name="description" content="Portfolio of Shashwat Aryal, a BSc CSIT student in Kathmandu building practical Cloud and DevOps skills with AWS, Docker, Terraform and CI/CD.">
-<meta name="theme-color" content="#0e1014">
+<meta name="theme-color" content="#090d12">
 <meta name="color-scheme" content="dark light">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Shashwat Aryal | Cloud &amp; DevOps">
@@ -20,6 +20,7 @@
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+<div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>
 <header class="site-header">
   <nav class="nav" aria-label="Primary">
     <a class="brand" href="#home" aria-label="Shashwat Aryal, home"><svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 22h22M18 22v10h20v10H18" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shashwat Aryal</span></a>
@@ -30,18 +31,21 @@
       <li><a href="#skills">Skills</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#journey">Journey</a></li>
+      <li><a href="#lab">Lab</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <button class="icon-btn theme-toggle" type="button" aria-pressed="false">Light theme</button>
+    <button class="icon-btn theme-toggle" type="button" aria-label="Switch to light mode">Light mode</button>
   </nav>
 </header>
 
 <main id="main">
 <section id="home" class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <p class="kicker">Shashwat Aryal · Kathmandu, Nepal</p>
-    <h1 id="hero-title">Building reliable cloud infrastructure and automated delivery workflows.</h1>
+    <p class="kicker"><span class="status-dot" aria-hidden="true"></span> PROFILE::BUILDING <span aria-hidden="true">/</span> KATHMANDU, NEPAL</p>
+    <h1 id="hero-title" class="hero-title" aria-label="Cloud systems, built with care."><span class="hero-line"><span class="hero-word">Cloud</span> <span class="hero-word">systems,</span></span><span class="hero-line"><span class="hero-word accent-text">built</span> <span class="hero-word accent-text">with</span> <span class="hero-word accent-text">care.</span></span></h1>
+    <p class="hero-position">Aspiring Cloud &amp; DevOps Engineer</p>
     <p class="lede">I'm a BSc CSIT student building practical Cloud and DevOps skills through real projects, and writing down what works, what broke and what I changed.</p>
+    <div class="hero-readout" aria-label="Portfolio context"><span>FOCUS <b>CLOUD + DEVOPS</b></span><span>INTEREST <b>CLOUD SECURITY</b></span></div>
     <div class="cta-row">
       <a class="btn primary" href="#projects">View projects</a>
       <a class="btn" href="https://github.com/sassy-on-cloud">GitHub profile</a>
@@ -50,6 +54,7 @@
     </div>
   </div>
   <figure class="pipeline-wrap">
+    <div class="diagram-heading"><span>DELIVERY WORKFLOW</span><span class="diagram-state"><i aria-hidden="true"></i> PROJECT IN PROGRESS</span></div>
     <ol class="pipeline" aria-label="Verified delivery path for the Cloud-Native DevOps Platform project">
       <li><b>Commit</b><span>GitHub Actions</span><i class="chip done">implemented</i></li>
       <li><b>Authenticate</b><span>GitHub OIDC and IAM</span><i class="chip done">implemented</i></li>
@@ -58,12 +63,13 @@
       <li><b>Route</b><span>Application Load Balancer</span><i class="chip done">verified</i></li>
       <li class="planned"><b>Extend</b><span>WAF and observability</span><i class="chip">planned</i></li>
     </ol>
-    <figcaption>Based on the project README. The platform is in progress; TLS, WAF, Kubernetes, and fuller observability remain planned.</figcaption>
+    <div class="pipeline-footer"><figcaption id="pipeline-caption">Based on the project README. The platform is in progress; TLS, WAF, Kubernetes, and fuller observability remain planned. The replay is illustrative, not live infrastructure.</figcaption><button id="pipeline-replay" class="flow-replay" type="button" aria-describedby="pipeline-caption"><span aria-hidden="true">↻</span> Replay path</button></div>
+    <p id="pipeline-feedback" class="visually-hidden" role="status" aria-live="polite"></p>
   </figure>
 </section>
 
 <section id="about" class="section" aria-labelledby="about-title">
-  <h2 id="about-title">About</h2>
+  <p class="section-index">01 / PROFILE</p><h2 id="about-title">About</h2>
   <div class="prose">
     <p>I'm in the sixth semester of a BSc CSIT degree in Nepal. Over the past while I've moved from Linux and Git basics to containers, AWS deployment, Terraform and CI/CD, because I like understanding how software actually gets to users and stays up.</p>
     <p>I learn by building small, complete things and documenting them: the architecture, the choices, and the problems I ran into. I care about reliability, automation and security, and I'm working towards a career as a Cloud and DevOps engineer, with cloud security as a longer-term direction.</p>
@@ -71,7 +77,7 @@
 </section>
 
 <section id="skills" class="section" aria-labelledby="skills-title">
-  <h2 id="skills-title">Skills</h2>
+  <p class="section-index">02 / TOOLKIT</p><h2 id="skills-title">Skills</h2>
   <p class="note">Grouped by how I've used them. "Used in projects" means it appears in a project below. "Learning" means I'm still building experience. None of this is production-level experience.</p>
   <div id="skills-root" class="skill-groups">
     <noscript><div class="skill-group"><h3>Cloud and infrastructure</h3><p>AWS, EC2, ECS Fargate, ECR, VPC, IAM, security groups, Application Load Balancer, and CloudWatch.</p></div>
@@ -85,7 +91,7 @@
 </section>
 
 <section id="projects" class="section" aria-labelledby="projects-title">
-  <h2 id="projects-title">Projects</h2>
+  <p class="section-index">03 / SELECTED WORK</p><h2 id="projects-title">Projects</h2>
   <div class="filters" role="group" aria-label="Filter projects by category" id="filters"></div>
   <p id="filter-status" class="note" role="status" aria-live="polite"></p>
   <div id="projects-root" class="project-grid"><p>Project cards use JavaScript; direct repository links follow.</p></div>
@@ -118,22 +124,32 @@
 </section>
 
 <section id="journey" class="section" aria-labelledby="journey-title">
-  <h2 id="journey-title">Journey</h2>
+  <p class="section-index">04 / CONTINUOUS LEARNING</p><h2 id="journey-title">Journey</h2>
   <p class="note">The order I learned things in. I've left out dates I can't back up with repository history.</p>
   <ol class="timeline" id="timeline"></ol>
 </section>
 
-<section id="contact" class="section" aria-labelledby="contact-title">
-  <h2 id="contact-title">Contact</h2>
-  <p class="lede">I'm looking for internships, junior roles and mentors in Cloud and DevOps. The quickest way to reach me is email.</p>
-  <ul class="contact-list">
-    <li><span>Email</span> <a id="email-link" href="mailto:shashwataryal2026@gmail.com">shashwataryal2026@gmail.com</a>
-      <button id="copy-email" class="btn small" type="button">Copy email</button></li>
-    <li><span>Phone</span> <a href="tel:+9779765340161">+977 9765340161</a></li>
-    <li><span>GitHub</span> <a href="https://github.com/sassy-on-cloud" rel="noopener">github.com/sassy-on-cloud</a></li>
-    <li><span>LinkedIn</span> <a href="https://www.linkedin.com/in/shashwataryal/" rel="noopener">linkedin.com/in/shashwataryal</a></li>
-  </ul>
-  <p id="copy-status" class="note" role="status" aria-live="polite"></p>
+<section id="lab" class="section" aria-labelledby="lab-title">
+  <p class="section-index">05 / OPEN NOTEBOOK</p><h2 id="lab-title">Lab notes</h2>
+  <p class="note">Current learning areas and clearly marked next steps. These are not presented as completed projects.</p>
+  <div id="lab-root" class="lab-grid"></div>
+  <noscript><p>Kubernetes, Prometheus, and Grafana are learning areas. TLS, AWS WAF, and fuller platform observability are planned next steps.</p></noscript>
+</section>
+
+<section id="contact" class="section contact-section" aria-labelledby="contact-title">
+  <div class="contact-panel">
+    <div class="contact-copy"><p class="section-index">06 / DIRECT CHANNEL</p><p class="contact-file">FILE::CONTACT</p><h2 id="contact-title">Let's talk<br><span>engineering.</span></h2>
+      <p class="lede">I'm looking for internships, junior roles and mentors in Cloud and DevOps. Email is the best way to reach me.</p>
+      <a class="btn primary contact-cta" href="mailto:shashwataryal2026@gmail.com">Start a conversation <span aria-hidden="true">↗</span></a>
+    </div>
+    <ul class="contact-list">
+      <li><span>Email</span> <a id="email-link" href="mailto:shashwataryal2026@gmail.com">shashwataryal2026@gmail.com</a><button id="copy-email" class="btn small" type="button">Copy email</button></li>
+      <li><span>Phone</span> <a href="tel:+9779765340161">+977 9765340161</a></li>
+      <li><span>GitHub</span> <a href="https://github.com/sassy-on-cloud" rel="noopener">github.com/sassy-on-cloud</a></li>
+      <li><span>LinkedIn</span> <a href="https://www.linkedin.com/in/shashwataryal/" rel="noopener">linkedin.com/in/shashwataryal</a></li>
+    </ul>
+    <p id="copy-status" class="note" role="status" aria-live="polite"></p>
+  </div>
 </section>
 </main>
 

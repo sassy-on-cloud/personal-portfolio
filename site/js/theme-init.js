@@ -1,4 +1,4 @@
-// Runs before first paint (loaded synchronously in <head>) to avoid a theme flash.
+// Apply the saved or system theme before first paint and keep controls working on every route.
 (function () {
   var root = document.documentElement;
   root.classList.add('js');
@@ -9,4 +9,22 @@
     else if (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) theme = 'light';
   } catch (e) { /* storage unavailable: keep default */ }
   root.setAttribute('data-theme', theme);
+
+  function syncThemeControls() {
+    var dark = root.getAttribute('data-theme') === 'dark';
+    document.querySelectorAll('.theme-toggle').forEach(function (button) {
+      button.textContent = dark ? 'Light mode' : 'Dark mode';
+      button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    });
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#090d12' : '#f2f1ea');
+  }
+  document.addEventListener('DOMContentLoaded', syncThemeControls);
+  document.addEventListener('click', function (event) {
+    if (!event.target.closest || !event.target.closest('.theme-toggle')) return;
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) { /* storage unavailable */ }
+    syncThemeControls();
+  });
 })();
