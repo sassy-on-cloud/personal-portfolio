@@ -24,6 +24,15 @@ test('every in-page nav link targets an existing section', async ({ page }) => {
   for (const h of hrefs) await expect(page.locator(h)).toHaveCount(1);
 });
 
+test('reloading from a section returns to the top while direct section links still work', async ({ page }) => {
+  await page.goto('/#projects');
+  await expect(page).toHaveURL(/#projects$/);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  await page.reload();
+  await expect(page).toHaveURL(/\/$/);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+});
+
 test('all in-page links resolve and IDs are unique', async ({ page }) => {
   await page.goto('/');
   const result = await page.evaluate(() => {
