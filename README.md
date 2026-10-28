@@ -7,7 +7,7 @@ The portfolio presents completed work, active learning, and planned project stag
 ## Site features
 
 - Dark and light themes, with the visitor's choice saved locally.
-- Responsive, keyboard-usable navigation and project filters.
+- Responsive, keyboard-usable navigation and a searchable command palette.
 - Project case studies with technologies, architecture, security, evidence, and lessons.
 - Reduced-motion support and visible focus styling.
 - A project workflow panel, portfolio readouts, and a compact learning notebook with learning and planned states kept distinct.
@@ -20,12 +20,12 @@ The portfolio presents completed work, active learning, and planned project stag
 
 ```text
 site/                 Deployable static site
-  assets/             Favicon and social-preview artwork
-  css/styles.css      Responsive design and theme styles
-  js/content.js       Project, skill, contact, journey, and lab-note content
-  js/main.js          Navigation, filters, theme, and page behavior
+  assets/             Profile images, resume, and social-preview artwork
+  css/                Shared and multipage styles
+  js/                 Content, page behavior, command palette, and terminal
+site-src/partials/    Shared HTML templates used by the page builder
+scripts/              Page builder, local server, URL metadata helper, and Lighthouse runner
 tests/                Playwright end-to-end and axe accessibility tests
-scripts/              Local server, Lighthouse runner, and domain metadata helper
 .github/workflows/    Pull request and main-branch quality checks
 ```
 
@@ -47,9 +47,9 @@ npm run lighthouse
 npm audit
 ```
 
-Playwright checks content, in-page navigation, JavaScript-disabled navigation, project links and filters, theme persistence, terminal input safety, contact links, responsive overflow at 320–1440 px, 404 handling, reduced motion, and axe WCAG A/AA rules in both themes. Lighthouse writes HTML and JSON reports under `.lighthouseci/`; accessibility, SEO, and best-practices scores below 90 fail the command. Performance below 90 is reported as a baseline warning because the local and CI runner conditions vary.
+Playwright checks rendered routes, JavaScript-disabled navigation, project links and command-palette search, theme persistence, terminal input safety, contact links, responsive overflow at 320–1440 px, 404 handling, reduced motion, and axe WCAG A/AA rules in both themes. Lighthouse writes HTML and JSON reports under `.lighthouseci/`; accessibility, SEO, and best-practices scores below 90 fail the command. Performance below 90 is reported as a baseline warning because the local and CI runner conditions vary.
 
-There is no build step: `site/` is the deployable output. The `npm start` server is for local review and does not simulate Cloudflare response headers.
+`npm run build:pages` generates the deployable pages in `site/`; `npm run check:pages` verifies generated output is current. The `npm start` server is for local review and does not simulate Cloudflare response headers.
 
 ## Automated checks
 

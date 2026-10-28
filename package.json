@@ -5,7 +5,9 @@
   "description": "Static portfolio for Shashwat Aryal",
   "scripts": {
     "start": "node scripts/serve-site.mjs",
-    "test": "playwright test",
+    "test": "npm run build:pages && npm run check:pages && playwright test",
+    "build:pages": "node scripts/build-pages.mjs",
+    "check:pages": "node scripts/build-pages.mjs --check",
     "lighthouse": "node scripts/run-lighthouse.mjs",
     "set-site-url": "node scripts/set-site-url.mjs"
   },

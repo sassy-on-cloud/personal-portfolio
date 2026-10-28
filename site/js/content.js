@@ -16,8 +16,6 @@ export const SKILLS = [
   { group: 'Security', items: [['IAM least privilege', 'used'], ['Network security fundamentals', 'used'], ['HTTP security headers', 'used'], ['Input validation', 'used'], ['Secure configuration', 'used']] },
 ];
 
-export const FILTERS = ['All', 'Cloud', 'DevOps', 'Infrastructure as Code', 'Containers', 'Security'];
-
 // flow nodes: [label, planned?]
 export const PROJECTS = [
   {

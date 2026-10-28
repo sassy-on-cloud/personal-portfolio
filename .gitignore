@@ -2,9 +2,15 @@ node_modules/
 playwright-report/
 test-results/
 .lighthouseci/
+artifacts/
 .env
 .env.*
 .sixth/
 *.pem
 *.key
 .DS_Store
+Thumbs.db
+*.log
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
