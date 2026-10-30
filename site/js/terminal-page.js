@@ -1,5 +1,5 @@
-import { CONTACT, SKILLS, PROJECTS, JOURNEY } from './content.js';
-import { PAGES } from './page-data.js';
+import { CONTACT, SKILLS, PROJECTS, JOURNEY } from './content.js?v=2';
+import { PAGES } from './page-data.js?v=2';
 
 const form = document.querySelector('#terminal-form');
 if (form) {

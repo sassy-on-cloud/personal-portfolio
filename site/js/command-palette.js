@@ -1,5 +1,5 @@
-import { CONTACT } from './content.js';
-import { SEARCH_INDEX } from './search-data.js';
+import { CONTACT } from './content.js?v=2';
+import { SEARCH_INDEX } from './search-data.js?v=2';
 
 const dialog = document.querySelector('#command-palette');
 if (dialog) {

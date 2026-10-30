@@ -6,9 +6,9 @@
   X-Frame-Options: DENY
   X-XSS-Protection: 0
 /js/*
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=0, must-revalidate
 /css/*
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=0, must-revalidate
 /assets/*
   Cache-Control: public, max-age=86400
 /favicon.svg

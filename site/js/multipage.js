@@ -1,6 +1,6 @@
-import './command-palette.js';
-import './terminal-page.js';
-import { CONTACT } from './content.js';
+import './command-palette.js?v=2';
+import './terminal-page.js?v=2';
+import { CONTACT } from './content.js?v=2';
 
 document.querySelectorAll('.quick-copy').forEach(button => button.addEventListener('click', async () => {
   const status = document.querySelector('.copy-status');

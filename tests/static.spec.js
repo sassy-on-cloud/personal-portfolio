@@ -26,9 +26,25 @@ test('Cloudflare headers keep scripts local and disable risky embedding and obje
   expect(headers).toContain("form-action 'none'");
   expect(headers).toContain("frame-ancestors 'none'");
   expect(headers).toContain('X-Content-Type-Options: nosniff');
+  expect(headers).toContain('/js/*\n  Cache-Control: public, max-age=0, must-revalidate');
+  expect(headers).toContain('/css/*\n  Cache-Control: public, max-age=0, must-revalidate');
   expect(headers).toContain('/css/*');
   expect(headers).toContain('/favicon.svg');
   expect(headers).not.toContain("'unsafe-inline'");
+});
+
+test('generated local stylesheets and scripts use a cache-busting version', async () => {
+  const html = await readProjectFile('../site/projects/cloud-native-devops-platform/index.html');
+  const assetReferences = [...html.matchAll(/(?:src|href)="(\/(?:js|css)\/[^"]+)"/g)].map(([, value]) => new URL(value, 'https://portfolio.test'));
+  expect(assetReferences.length).toBeGreaterThan(0);
+  expect(assetReferences.every(url => /^\d+$/.test(url.searchParams.get('v') ?? ''))).toBe(true);
+
+  for (const file of ['multipage.js', 'command-palette.js', 'terminal-page.js']) {
+    const source = await readProjectFile('../site/js/' + file);
+    const imports = [...source.matchAll(/(?:from\s+|import\s*)['"](\.\/[^'"]+\.js(?:\?[^'"]*)?)['"]/g)].map(([, value]) => new URL(value, 'https://portfolio.test'));
+    expect(imports.length, file).toBeGreaterThan(0);
+    expect(imports.every(url => /^\d+$/.test(url.searchParams.get('v') ?? '')), file).toBe(true);
+  }
 });
 
 test('repository ignores local dependencies, environment files, and generated reports', async () => {
