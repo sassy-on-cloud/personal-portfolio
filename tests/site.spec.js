@@ -30,7 +30,9 @@ test('every clean route returns one h1, a unique title, canonical URL, and curre
     const title = await page.title();
     expect(titles.has(title), route).toBe(false);
     titles.add(title);
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://shashwat-aryal.com.np${route}`);
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', `https://shashwat-aryal.com.np${route}`);
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://shashwat-aryal.com.np/assets/og-image.png');
     const current = page.locator('.site-header .nav-menu a[aria-current="page"]');
     await expect(current).toHaveCount(1);
     await expect(current).toHaveAttribute('href', route.startsWith('/projects/') && route !== '/projects/' ? '/projects/' : route);
@@ -38,7 +40,7 @@ test('every clean route returns one h1, a unique title, canonical URL, and curre
 });
 
 test('new-tab links isolate the opener and referrer and use no javascript URLs', async ({ page }) => {
-  for (const route of routes) {
+  for (const route of [...routes, '/404.html']) {
     await page.goto(route);
     const unsafeLinks = await page.locator('a').evaluateAll(anchors => anchors.filter(anchor => {
       const href = anchor.getAttribute('href') || '';
@@ -57,6 +59,12 @@ test('each page has one primary page navigation list in the top bar', async ({ p
     await expect(pageNavs.locator('a')).toHaveCount(8);
     await expect(page.locator('.profile-rail nav')).toHaveCount(0);
   }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/404.html');
+  await expect(page.locator('.site-header .nav-menu a')).toHaveCount(8);
+  await expect(page.locator('.site-header .nav-toggle')).toBeVisible();
+  await page.locator('.site-header .nav-toggle').click();
+  await expect(page.locator('#nav-menu .nav-menu a[href="/projects/"]')).toBeVisible();
 });
 
 test('page navigation uses clean URLs without hashes', async ({ page }) => {
@@ -102,7 +110,7 @@ test('shared theme preference persists across page navigation', async ({ page })
 
 test('command palette opens by shortcut, filters projects, and restores focus on Escape', async ({ page }) => {
   await page.goto('/');
-  const trigger = page.locator('.site-header .palette-trigger');
+  const trigger = page.locator('.nav-controls .palette-trigger');
   await page.keyboard.press('Control+k');
   await expect(page.locator('#command-palette')).toHaveJSProperty('open', true);
   await expect(page.locator('#palette-query')).toBeFocused();
@@ -117,7 +125,7 @@ test('command palette opens by shortcut, filters projects, and restores focus on
 
 test('command palette Enter opens the Terraform project and palette roles are accessible', async ({ page }) => {
   await page.goto('/');
-  await page.locator('.site-header .palette-trigger').click();
+  await page.locator('.nav-controls .palette-trigger').click();
   await page.locator('#palette-query').fill('terraform');
   const report = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
   expect(report.violations.map(item => item.id)).toEqual([]);
@@ -127,7 +135,7 @@ test('command palette Enter opens the Terraform project and palette roles are ac
 
 test('command palette searches all indexed categories and provides useful empty-state suggestions', async ({ page }) => {
   await page.goto('/');
-  await page.locator('.site-header .palette-trigger').click();
+  await page.locator('.nav-controls .palette-trigger').click();
   const query = page.locator('#palette-query');
   const results = page.locator('#palette-results');
   for (const [term, expected] of [['skills', /Skills/], ['skill', /Skills/], ['terraform', /Terraform/], ['tf', /Terraform/], ['docker', /Docker/], ['cv', /Resume|Download resume/], ['email', /email/i], ['learning', /Learning/], ['terminal', /Terminal/i]]) {
@@ -193,12 +201,179 @@ test('navigation and page content work without JavaScript', async ({ browser }) 
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   await page.goto('/');
-  await expect(page.locator('.nav-menu')).toBeVisible();
+  await expect(page.locator('.no-js-nav .nav-menu')).toBeVisible();
   await expect(page.locator('.mobile-profile a[download]')).toBeVisible();
-  await page.locator('.nav-menu a[href="/projects/"]').click();
+  await page.locator('.no-js-nav a[href="/projects/"]').click();
   await expect.poll(() => new URL(page.url()).pathname).toBe('/projects/');
   await expect(page.locator('.project-card')).toHaveCount(5);
+  await page.goto('/404.html');
+  await expect(page.locator('.no-js-nav a[href="/projects/"]')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Go to the home page' })).toHaveAttribute('href', '/');
   await context.close();
+});
+
+test('mobile header controls fit without overlap or horizontal overflow', async ({ page }) => {
+  await page.goto('/');
+  for (const width of [320, 360, 390, 430, 600, 768, 900, 1024, 1180, 1200, 1366, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 844 });
+    const layout = await page.evaluate(() => {
+      const selectors = ['.brand', '.nav-controls .palette-trigger', '.nav-controls .theme-toggle', '.nav-controls .nav-toggle'];
+      const boxes = selectors.map(selector => {
+        const element = document.querySelector(selector);
+        const rect = element.getBoundingClientRect();
+        return { selector, visible: getComputedStyle(element).display !== 'none', x: rect.x, y: rect.y, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height };
+      });
+      const links = [...document.querySelectorAll('#nav-menu .nav-menu a')].map((element, index) => {
+        const rect = element.getBoundingClientRect();
+        return { selector: `nav-link-${index}`, x: rect.x, y: rect.y, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height, visible: element.checkVisibility() };
+      });
+      const visible = [...boxes, ...links].filter(box => box.visible);
+      const intersections = [];
+      for (let first = 0; first < visible.length; first += 1) {
+        for (let second = first + 1; second < visible.length; second += 1) {
+          if (visible[first].x < visible[second].right && visible[first].right > visible[second].x && visible[first].y < visible[second].bottom && visible[first].bottom > visible[second].y) intersections.push([visible[first].selector, visible[second].selector]);
+        }
+      }
+      return { boxes, intersections, scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth };
+    });
+    expect(layout.intersections, `${width}px header intersections`).toEqual([]);
+    expect(layout.scrollWidth, `${width}px horizontal overflow`).toBeLessThanOrEqual(layout.clientWidth);
+    for (const box of layout.boxes.filter(item => item.selector !== '.brand' && item.visible)) {
+      expect(box.width, `${width}px ${box.selector} width`).toBeGreaterThanOrEqual(44);
+      expect(box.height, `${width}px ${box.selector} height`).toBeGreaterThanOrEqual(44);
+    }
+  }
+});
+
+test('all pages avoid horizontal overflow across mobile, tablet and desktop in both themes', async ({ page }) => {
+  test.setTimeout(120000);
+  for (const theme of ['dark', 'light']) {
+    for (const route of [...routes, '/404.html']) {
+      for (const width of [320, 390, 768, 1024, 1366, 1440, 1920]) {
+        await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
+        await page.goto(route);
+        await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
+        const dimensions = await page.evaluate(() => ({
+          viewport: document.documentElement.clientWidth,
+          document: document.documentElement.scrollWidth,
+          body: document.body.scrollWidth,
+        }));
+        expect(dimensions.document, `${route} ${width}px ${theme} document overflow`).toBeLessThanOrEqual(dimensions.viewport);
+        expect(dimensions.body, `${route} ${width}px ${theme} body overflow`).toBeLessThanOrEqual(dimensions.viewport);
+      }
+    }
+  }
+});
+
+test('menu sheet supports keyboard, scrim, link navigation, focus, and inert background', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/projects/');
+  const toggle = page.locator('.nav-toggle');
+  const menu = page.locator('#nav-menu');
+  const links = menu.locator('.nav-menu a');
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(toggle).toHaveAttribute('aria-label', 'Close menu');
+  await expect(menu).toHaveAttribute('aria-hidden', 'false');
+  await expect(page.locator('main')).toHaveJSProperty('inert', true);
+  await expect(page.locator('main')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('html')).toHaveCSS('overflow', 'hidden');
+  await expect(menu.getByRole('button', { name: 'Search' })).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(menu.locator('.rail-social a').last()).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(menu.getByRole('button', { name: 'Search' })).toBeFocused();
+  await expect(links).toHaveCount(8);
+  for (const [label, href] of [
+    ['Home', '/'], ['Projects', '/projects/'], ['Resume', '/resume/'], ['Journey', '/journey/'],
+    ['Lab Notes', '/notes/'], ['Contact', '/contact/'], ['Terminal', '/terminal/'], ['Infrastructure', '/infrastructure/'],
+  ]) {
+    const link = links.filter({ hasText: label });
+    await expect(link).toHaveAttribute('href', href);
+    await expect.poll(() => link.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(48);
+  }
+  await expect(links.filter({ hasText: 'Projects' })).toHaveAttribute('aria-current', 'page');
+  for (const theme of ['dark', 'light']) {
+    await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
+    const report = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(report.violations.map(item => item.id), `open menu in ${theme}`).toEqual([]);
+  }
+  await page.keyboard.press('Escape');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(toggle).toHaveAttribute('aria-label', 'Open menu');
+  await expect(toggle).toBeFocused();
+  await expect(page.locator('main')).toHaveJSProperty('inert', false);
+  await expect(page.locator('main')).not.toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('html')).not.toHaveCSS('overflow', 'hidden');
+
+  await toggle.click();
+  const panelBox = await menu.boundingBox();
+  await page.locator('.menu-scrim').click({ position: { x: 8, y: 820 } });
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  expect(panelBox).not.toBeNull();
+
+  await toggle.click();
+  await links.filter({ hasText: 'Resume' }).click();
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/resume/');
+  await expect(page.locator('.nav-toggle')).toHaveAttribute('aria-expanded', 'false');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('.nav-toggle').click();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(page.locator('.nav-toggle')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('main')).toHaveJSProperty('inert', false);
+});
+
+test('search hint follows pointer capability and mobile palette remains touch-sized', async ({ page, browser }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await expect(page.locator('.search-shortcut')).toBeVisible();
+  await expect(page.locator('.search-shortcut')).toContainText(/(?:Ctrl|Cmd)\+K/);
+
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const touchPage = await context.newPage();
+  await touchPage.goto('/');
+  await expect(touchPage.locator('.search-shortcut')).toBeHidden();
+  await touchPage.locator('.nav-controls .palette-trigger').click();
+  await expect(touchPage.locator('#command-palette')).toHaveJSProperty('open', true);
+  await expect(touchPage.locator('.palette-close')).toBeVisible();
+  const inputSize = await touchPage.locator('#palette-query').evaluate(element => Number.parseFloat(getComputedStyle(element).fontSize));
+  expect(inputSize).toBeGreaterThanOrEqual(16);
+  await touchPage.keyboard.press('Escape');
+  await context.close();
+});
+
+test('mobile identity appears only on home with a compact resume action row', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await expect(page.locator('.mobile-profile')).toBeVisible();
+  await expect(page.locator('.mobile-profile .resume-actions')).toContainText('Download resume (PDF)');
+  await expect(page.locator('.mobile-profile .resume-actions')).toContainText('View (PDF)');
+  await expect(page.locator('.mobile-profile').getByText('·', { exact: true })).toHaveCount(0);
+  await page.goto('/projects/cloud-native-devops-platform/');
+  await expect(page.locator('.mobile-profile')).toHaveCount(0);
+});
+
+test('capture menu screenshots at mobile and desktop widths in both themes', async ({ page }) => {
+  const shots = path.resolve('artifacts/mobile-header');
+  await mkdir(shots, { recursive: true });
+  for (const theme of ['light', 'dark']) {
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+      await page.goto('/');
+      await page.evaluate(value => { localStorage.setItem('theme', value); document.documentElement.dataset.theme = value; }, theme);
+      await page.waitForTimeout(250);
+      for (const state of ['closed', 'open']) {
+        if (width === 390 && state === 'open') {
+          await page.locator('.nav-toggle').click();
+          await expect(page.locator('#nav-menu')).toHaveCSS('opacity', '1');
+        }
+        const target = path.join(shots, `menu-${state}-${theme}-${width}.png`);
+        await page.screenshot({ path: target, fullPage: false });
+        console.log(`Header screenshot: ${target}`);
+      }
+    }
+  }
 });
 
 test('axe reports no WCAG A/AA issues on every route in both themes', async ({ page }) => {
@@ -206,7 +381,7 @@ test('axe reports no WCAG A/AA issues on every route in both themes', async ({ p
   for (const theme of ['dark', 'light']) {
     await page.goto('/');
     await page.evaluate(value => localStorage.setItem('theme', value), theme);
-    for (const route of routes) {
+    for (const route of [...routes, '/404.html']) {
       await page.goto(route);
       const report = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
       expect(report.violations.map(item => item.id), route + ' in ' + theme).toEqual([]);
@@ -264,7 +439,7 @@ test('capture requested page, palette and theme screenshots', async ({ page }) =
       for (const [name, route, palette] of examples) {
         await page.goto(route);
         await page.evaluate(value => { localStorage.setItem('theme', value); document.documentElement.dataset.theme = value; }, theme);
-        if (palette) await page.locator('.site-header .palette-trigger').click();
+        if (palette) await page.locator('.nav-controls .palette-trigger').click();
         const target = path.join(shots, name + '-' + theme + '-' + width + '.png');
         await page.screenshot({ path: target, fullPage: !palette });
         if (palette) await page.keyboard.press('Escape');

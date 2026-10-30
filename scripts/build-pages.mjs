@@ -3,7 +3,11 @@ import path from 'node:path';
 import { CONTACT, SKILLS, PROJECTS, JOURNEY, LAB_NOTES } from '../site/js/content.js';
 
 // Set SITE_ORIGIN only after a production origin has been confirmed.
-const SITE_ORIGIN = (process.env.SITE_ORIGIN ?? '').replace(/\/$/, '');
+const siteOrigin = new URL(process.env.SITE_ORIGIN ?? 'https://shashwat-aryal.com.np');
+if (siteOrigin.protocol !== 'https:' || siteOrigin.username || siteOrigin.password || siteOrigin.pathname !== '/' || siteOrigin.search || siteOrigin.hash) {
+  throw new Error('SITE_ORIGIN must be an HTTPS origin without a path or credentials.');
+}
+const SITE_ORIGIN = siteOrigin.origin;
 const CHECK_ONLY = process.argv.includes('--check');
 const siteRoot = path.resolve('site');
 const partialRoot = path.resolve('site-src/partials');
@@ -57,18 +61,34 @@ for (const page of pages) {
   const currentPath = page.project ? '/projects/' : page.path;
   const link = x => '<a href="' + x.path + '"' + (x.path === currentPath ? ' aria-current="page"' : '') + '>' + esc(x.label) + '</a>';
   const headerNav = navPages.map(x => '<li>' + link(x) + '</li>').join('');
-  const head = fill(headTpl, { TITLE: esc(page.title), DESCRIPTION: esc(page.description), CANONICAL: esc(url(page.path)), OG_TITLE: esc(page.title), OG_DESCRIPTION: esc(page.description), OG_URL: esc(url(page.path)) });
+  const head = fill(headTpl, { TITLE: esc(page.title), DESCRIPTION: esc(page.description), CANONICAL: esc(url(page.path)), OG_TITLE: esc(page.title), OG_DESCRIPTION: esc(page.description), OG_URL: esc(url(page.path)), OG_IMAGE: esc(url('/assets/og-image.png')) });
   const learningItems = LAB_NOTES.filter(item => item.status.toLowerCase() === 'learning').slice(0, 3);
   const plannedItem = LAB_NOTES.find(item => item.status.toLowerCase() === 'planned');
   const nowItems = learningItems.map(item => '<li><a href="/notes/">' + esc(item.title) + '</a><span class="now-label">Learning</span></li>').join('');
   const nextPlanned = plannedItem ? '<a href="/notes/">' + esc(plannedItem.title) + '</a> <span class="now-label planned">Planned</span>' : '';
   const rail = fill(railTpl, { NOW_ITEMS: nowItems, NEXT_PLANNED: nextPlanned, EMAIL: esc(CONTACT.email) });
   const header = fill(headerTpl, { NAV: headerNav });
-  const html = '<!doctype html>\n<html lang="en" data-theme="dark">\n<head>' + head + '</head>\n<body><a class="skip" href="#main">Skip to content</a><div class="scroll-progress" aria-hidden="true"></div>' + header + '<main id="main" class="page-layout"><aside class="profile-rail" aria-label="Profile and quick actions">' + rail + '</aside><div class="main-content"><article class="page-body">' + body(page) + '</article></div></main>' + footer + '<script type="module" src="/js/multipage.js"></script>' + (page.path === '/' ? '<script defer src="/js/legacy-hash.js"></script>' : '') + '</body></html>\n';
+  const mobileProfile = page.path === '/' ? '<section class="mobile-profile" aria-label="Profile"><picture class="mobile-photo"><source srcset="/assets/profile.webp" type="image/webp"><img src="/assets/profile.jpg" width="60" height="60" alt="Portrait of Shashwat Aryal"></picture><div class="mobile-profile-copy"><strong>Shashwat Aryal</strong><span class="mobile-role">Aspiring Cloud &amp; DevOps Engineer</span><span class="mobile-location">Kathmandu, Nepal</span></div><div class="resume-actions"><a class="btn primary" href="/assets/Shashwat-Aryal-Resume.pdf" download>Download resume (PDF)</a><a class="btn resume-view" href="/assets/Shashwat-Aryal-Resume.pdf" target="_blank" rel="noopener noreferrer">View (PDF)</a></div></section>' : '';
+  const html = '<!doctype html>\n<html lang="en" data-theme="dark">\n<head>' + head + '</head>\n<body><a class="skip" href="#main">Skip to content</a><div class="scroll-progress" aria-hidden="true"></div>' + header + '<main id="main" class="page-layout">' + mobileProfile + '<aside class="profile-rail" aria-label="Profile and quick actions">' + rail + '</aside><div class="main-content"><article class="page-body">' + body(page) + '</article></div></main>' + footer + '<script type="module" src="/js/multipage.js"></script>' + (page.path === '/' ? '<script defer src="/js/legacy-hash.js"></script>' : '') + '</body></html>\n';
   const destination = path.join(siteRoot, page.path === '/' ? 'index.html' : page.path.slice(1), page.path === '/' ? '' : 'index.html');
   await mkdir(path.dirname(destination), { recursive: true });
   await writeGenerated(destination, html);
 }
+const notFoundTitle = 'Page not found | Shashwat Aryal';
+const notFoundDescription = 'The requested portfolio page could not be found.';
+const notFoundHead = fill(headTpl, {
+  TITLE: esc(notFoundTitle),
+  DESCRIPTION: esc(notFoundDescription),
+  CANONICAL: esc(url('/404.html')),
+  OG_TITLE: esc(notFoundTitle),
+  OG_DESCRIPTION: esc(notFoundDescription),
+  OG_URL: esc(url('/404.html')),
+  OG_IMAGE: esc(url('/assets/og-image.png')),
+}).replace('<link rel="canonical"', '<meta name="robots" content="noindex">\n<link rel="canonical"');
+const notFoundNav = navPages.map(page => '<li><a href="' + page.path + '">' + esc(page.label) + '</a></li>').join('');
+const notFoundHeader = fill(headerTpl, { NAV: notFoundNav });
+const notFoundHtml = '<!doctype html>\n<html lang="en" data-theme="dark">\n<head>' + notFoundHead + '</head>\n<body><a class="skip" href="#main">Skip to content</a><div class="scroll-progress" aria-hidden="true"></div>' + notFoundHeader + '<main id="main" class="section notfound"><p class="kicker">Error 404</p><h1>That page doesn\'t exist.</h1><p class="lede">The link may be mistyped or out of date. The portfolio lives on one page.</p><p><a class="btn primary" href="/">Go to the home page</a></p></main>' + footer + '<script type="module" src="/js/multipage.js"></script></body></html>\n';
+await writeGenerated(path.join(siteRoot, '404.html'), notFoundHtml);
 const locations = SITE_ORIGIN ? pages.map(x => '<url><loc>' + esc(url(x.path)) + '</loc></url>').join('') : '';
 const pageData = 'export const PAGES = ' + JSON.stringify(pages.map(({ path, label, title }) => ({ path, label, title })), null, 2) + ';\n';
 await writeGenerated(path.join(siteRoot, 'js/page-data.js'), pageData);

@@ -9,7 +9,8 @@ if (dialog) {
   const results = dialog.querySelector('#palette-results');
   const emptyPane = dialog.querySelector('#palette-empty');
   const status = dialog.querySelector('#palette-status');
-  let returnFocus = triggers[0];
+  const primaryTrigger = document.querySelector('.nav-controls .palette-trigger') || triggers[0];
+  let returnFocus = primaryTrigger;
   let items = [];
   let selected = 0;
   let idCounter = 0;
@@ -145,7 +146,7 @@ if (dialog) {
   }
 
   triggers.forEach(trigger => trigger.addEventListener('click', () => {
-    returnFocus = trigger;
+    returnFocus = trigger.closest('#nav-menu') ? document.querySelector('.nav-toggle') : trigger;
     dialog.showModal();
     expanded.clear();
     input.value = '';
@@ -165,7 +166,7 @@ if (dialog) {
   document.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
-      if (!dialog.open) triggers[0]?.click();
+      if (!dialog.open) primaryTrigger?.click();
       else input.focus();
     }
   });

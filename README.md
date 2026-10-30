@@ -7,7 +7,7 @@ The portfolio presents completed work, active learning, and planned project stag
 ## Site features
 
 - Dark and light themes, with the visitor's choice saved locally.
-- Responsive, keyboard-usable navigation and a searchable command palette.
+- A touch-first mobile navigation sheet, keyboard-usable desktop navigation, and a searchable command palette.
 - Project case studies with technologies, architecture, security, evidence, and lessons.
 - Reduced-motion support and visible focus styling.
 - A project workflow panel, portfolio readouts, and a compact learning notebook with learning and planned states kept distinct.
@@ -39,17 +39,18 @@ npx playwright install chromium
 npm start
 ```
 
-Open `http://127.0.0.1:4173`. In another terminal, run:
+Open `http://127.0.0.1:4173`. The page builder regenerates all clean-URL pages in `site/`; the build uses `SITE_ORIGIN` (defaulting to the confirmed production domain) for canonical and social metadata, `sitemap.xml`, and `robots.txt`. In another terminal, run:
 
 ```sh
 npm test
 npm run lighthouse
 npm audit
+npm audit --omit=dev
 ```
 
-Playwright checks rendered routes, JavaScript-disabled navigation, project links and command-palette search, theme persistence, terminal input safety, contact links, responsive overflow at 320–1440 px, 404 handling, reduced motion, and axe WCAG A/AA rules in both themes. Lighthouse writes HTML and JSON reports under `.lighthouseci/`; accessibility, SEO, and best-practices scores below 90 fail the command. Performance below 90 is reported as a baseline warning because the local and CI runner conditions vary.
+Playwright checks rendered routes, JavaScript-disabled navigation, project links and command-palette search, theme persistence, terminal input safety, contact links, responsive overflow and header layout at 320–1920 px, mobile-menu behavior, 404 handling, reduced motion, and axe WCAG A/AA rules in both themes. Header screenshots are written to `artifacts/mobile-header/`; other screenshots are written to `artifacts/theme-comfort/`. Lighthouse writes HTML and JSON reports under `.lighthouseci/`; accessibility, SEO, and best-practices scores below 90 fail the command. Performance below 90 is reported as a baseline warning because the local and CI runner conditions vary.
 
-`npm run build:pages` generates the deployable pages in `site/`; `npm run check:pages` verifies generated output is current. The `npm start` server is for local review and does not simulate Cloudflare response headers.
+`npm run build:pages` generates the deployable pages in `site/`; `npm run check:pages` verifies generated output is current. To override the configured origin for a build, set `SITE_ORIGIN` in the environment. `npm run set-site-url -- https://your-approved-domain.example` regenerates every page and sitemap using the supplied origin. The `npm start` server is for local review and does not simulate Cloudflare response headers.
 
 ## Automated checks
 
@@ -62,19 +63,19 @@ This is a static site. Connect the portfolio repository to Cloudflare Pages with
 | Setting | Value |
 | --- | --- |
 | Framework preset | None |
-| Build command | Leave empty |
+| Build command | `npm run build:pages` |
 | Build output directory | `site` |
 | Production branch | `main` (or the chosen production branch) |
 
 Preview deployments can be enabled for pull requests. The `site/_headers` file configures security headers on Cloudflare Pages. The site itself needs no server, database, paid service, or environment variables.
 
-No custom production domain is configured in this repository. After a domain is registered and connected in Cloudflare Pages, generate canonical and sitemap metadata with:
+The confirmed production domain is `https://shashwat-aryal.com.np`. The page builder uses this as its default origin. Build metadata and sitemap URLs come from the single `SITE_ORIGIN` setting; use the helper to regenerate all pages when the origin changes:
 
 ```sh
 npm run set-site-url -- https://your-approved-domain.example
 ```
 
-Use the exact HTTPS origin assigned to the site. This updates `site/index.html`, `site/robots.txt`, and creates `site/sitemap.xml`. Do not publish a canonical domain until it is actually connected and serving the site.
+Use the exact HTTPS origin connected to Cloudflare Pages. `SITE_ORIGIN` may also be set in the build environment for automated builds.
 
 ## Project evidence
 

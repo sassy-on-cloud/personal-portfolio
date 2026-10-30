@@ -17,8 +17,9 @@
       button.setAttribute('aria-pressed', String(!dark));
     });
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', dark ? '#090d12' : '#f3f0e8');
+    if (meta) meta.setAttribute('content', dark ? '#090d12' : '#e9eee7');
   }
+  syncThemeControls();
   document.addEventListener('DOMContentLoaded', syncThemeControls);
   document.addEventListener('click', function (event) {
     if (!event.target.closest || !event.target.closest('.theme-toggle')) return;

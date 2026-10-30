@@ -102,8 +102,6 @@ body:has(.page-layout) .site-header{display:block!important}
   .nav{width:calc(100% - 2rem);flex-wrap:wrap}
   .nav-toggle{display:inline-block}
   .nav-menu{display:flex;order:5;width:100%;flex-direction:column;border-top:1px solid var(--line);padding:.5rem 0}
-  .js .nav-menu:not(.open){display:none}
-  .nav-menu.open{display:flex}
   .nav-menu a{padding:.65rem .5rem}
 }
 @media(max-width:600px){.card-grid{grid-template-columns:1fr}.site-footer{width:calc(100% - 2rem)}.page-body>h1{font-size:2.5rem}.contact-details{grid-template-columns:1fr;gap:.2rem}.contact-details dd{margin-bottom:.8rem}}
@@ -155,4 +153,26 @@ body:has(.page-layout) .site-header{display:block!important}
   .page-body{color:var(--foreground)}
   body{background:var(--background)!important;color:var(--foreground)!important}
   .page-body a::after{color:var(--muted)}
+}
+
+.site-header .nav .icon-btn{width:44px;min-width:44px;height:44px;min-height:44px;padding:0}
+[data-theme="light"] .site-header{background:var(--bg);border-color:var(--line)}
+@media(min-width:1200px){
+  .profile-rail{top:calc(var(--header-row-height) + 1rem);max-height:calc(100dvh - var(--header-row-height) - 2rem)}
+  .mobile-profile{display:none}
+}
+@media(max-width:1199px){
+  .page-layout{width:100%;display:block}
+  .profile-rail{display:none}
+  .mobile-profile{display:grid;grid-template-columns:60px minmax(0,1fr);align-items:center;gap:8px 12px;width:calc(100% - 2rem);max-width:860px;margin:12px auto 0;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m)}
+  .mobile-profile .mobile-photo{display:block;width:60px;height:60px;grid-row:1;border:1px solid var(--line);border-radius:50%;overflow:hidden}
+  .mobile-profile .mobile-photo img{display:block;width:100%;height:100%;object-fit:cover}
+  .mobile-profile-copy{display:grid;gap:2px;min-width:0}
+  .mobile-profile-copy strong{color:var(--text);font-size:.95rem;line-height:1.3}
+  .mobile-profile-copy span{display:block;min-width:0;color:var(--muted);font-size:.75rem;line-height:1.3;overflow-wrap:anywhere}
+  .mobile-profile .resume-actions{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:0}
+  .mobile-profile .resume-actions .btn{display:flex;align-items:center;justify-content:center;min-height:48px;height:auto;padding:7px;text-align:center;line-height:1.2}
+  .mobile-profile .resume-actions .resume-view{white-space:nowrap}
+  .main-content{width:min(1120px,calc(100% - 2rem));margin-inline:auto}
+  .page-body{padding-top:clamp(1.75rem,5vw,3rem)}
 }
