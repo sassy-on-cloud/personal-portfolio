@@ -280,7 +280,7 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--line) 55%,transpar
 @media(prefers-reduced-motion:reduce){.card:not([hidden]){animation:none}}
 
 /* Theme changes stay quiet while shared controls remain readable on every route. */
-body,.site-header,.pipeline-wrap,.pipeline,.pipeline li,.term,.contact-panel{transition:background-color var(--ease),color var(--ease),border-color var(--ease),box-shadow var(--ease)}
+body,.pipeline-wrap,.pipeline,.pipeline li,.term,.contact-panel{transition:background-color var(--ease),color var(--ease),border-color var(--ease),box-shadow var(--ease)}
 .site-footer a{color:var(--muted);text-underline-offset:3px}.site-footer a:hover{color:var(--accent)}
 
 /* Motion pass: a line-by-line hero, a replayable workflow, and varied scroll reveals. */

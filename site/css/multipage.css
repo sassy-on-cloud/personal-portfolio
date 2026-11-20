@@ -24,7 +24,7 @@
 .rail-social{display:flex;gap:1rem;margin-top:.6rem}
 .rail-social a{color:var(--muted);font-size:.87rem}
 .page-body{max-width:860px;padding-block:clamp(3rem,7vw,6rem);min-width:0}
-.page-body>h1{font-size:clamp(2.5rem,6vw,4.2rem);max-width:15ch;margin:.4rem 0 1rem}
+.page-body>h1{font-size:clamp(2.5rem,6vw,4.2rem);max-width:15ch;margin:.4rem 0 1rem;overflow-wrap:anywhere}
 .page-body h2{margin:2.5rem 0 1rem;font-size:clamp(1.45rem,3vw,2rem)}
 .page-body p,.page-body li{max-width:68ch}
 .page-body section{padding-block:.7rem}
